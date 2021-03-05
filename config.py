@@ -11,3 +11,8 @@ WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_URL_PATH)
 
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = os.environ.get('PORT')
+
+
+XBOX_CLIENT_ID = os.getenv('XBOX_CLIENT_ID', '')
+XBOX_CLIENT_SECRET = os.getenv('XBOX_CLIENT_SECRET', '')
+XBOX_TOKEN = os.getenv('XBOX_TOKEN', '{}')
