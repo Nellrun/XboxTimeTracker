@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher, types
 # from aiogram.utils import context
 # from aiogram.dispatcher.webhook import get_new_configured_app
 
-TOKEN = os.getenv('TOKEN', '')
+TOKEN = os.getenv('TELEGRAM_TOKEN', '')
 
 WEBHOOK_HOST = f'https://minecraft-nocovid19-bot.herokuapp.com/'  # Enter here your link from Heroku project settings
 WEBHOOK_URL_PATH = '/webhook/' + TOKEN
