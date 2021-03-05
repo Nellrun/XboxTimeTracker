@@ -22,7 +22,7 @@ async def start(message: types.Message):
     if not online_friends:
         await message.reply('Nobody is playing minecraft =(')
     else:
-        await message.reply('Players: \n' + '\n'.join(online_friends))
+        await message.reply('Players: \n' + str(online_friends))
 
 
 async def on_startup(app):
