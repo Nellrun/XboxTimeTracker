@@ -15,7 +15,7 @@ async def start(message: types.Message):
 
 
 @dp.message_handler(commands=['online'])
-async def start(message: types.Message):
+async def online(message: types.Message):
     """Handle online command"""
     client = xbox_client.get_client()
     online_friends = await client.get_minecraft_online()
