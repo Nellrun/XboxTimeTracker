@@ -18,11 +18,11 @@ async def start(message: types.Message):
 async def start(message: types.Message):
     """Handle online command"""
     client = xbox_client.get_client()
-    online_friends = client.get_minecraft_online()
+    online_friends = await client.get_minecraft_online()
     if not online_friends:
         await message.reply('Nobody is playing minecraft =(')
     else:
-        await message.reply('Players: \n' + str(online_friends))
+        await message.reply('Players: \n' + '\n'.join(online_friends) )
 
 
 async def on_startup(app):
