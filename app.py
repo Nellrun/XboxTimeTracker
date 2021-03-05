@@ -1,4 +1,5 @@
 import config
+import xbox_client
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils.executor import start_webhook
@@ -11,6 +12,17 @@ dp = Dispatcher(bot)
 async def start(message: types.Message):
     """Handle start command"""
     await message.reply("I'm alive")
+
+
+@dp.message_handler(commands=['online'])
+async def start(message: types.Message):
+    """Handle online command"""
+    client = xbox_client.get_client()
+    online_friends = client.get_minecraft_online()
+    if not online_friends:
+        await message.reply('Nobody is playing minecraft =(')
+    else:
+        await message.reply('Players: \n' + '\n'.join(online_friends))
 
 
 async def on_startup(app):
