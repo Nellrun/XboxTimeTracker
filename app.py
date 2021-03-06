@@ -25,6 +25,11 @@ async def online(message: types.Message):
         await message.reply('Players: \n' + '\n'.join(online_friends) )
 
 
+@dp.message_handler(commands=['chat_id'])
+async def chat_id(message: types.Message):
+    await message.reply(message.chat.id)
+
+
 async def on_startup(app):
     """Simple hook for aiohttp application which manages webhook"""
     await bot.delete_webhook()
