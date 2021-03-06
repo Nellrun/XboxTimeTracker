@@ -1,4 +1,5 @@
 from typing import List
+from typing import NamedTuple
 
 import config
 
@@ -9,6 +10,13 @@ from xbox.webapi.authentication.models import OAuth2TokenResponse
 
 
 XBOX_STATE_ONLINE = 'Online'
+
+
+class PlayerInfo(NamedTuple):
+    gamertag: str
+    online: bool
+    game: str
+
 
 class XboxClient:
 
@@ -24,28 +32,44 @@ class XboxClient:
 
         auth_mgr.oauth = OAuth2TokenResponse.parse_raw(config.XBOX_TOKEN)
         self._client = XboxLiveClient(auth_mgr)
-    
 
-    async def get_minecraft_online(self) -> List[str]:
+    async def get_minecraft_online(self) -> List[PlayerInfo]:
+        players = await self.get_online_players()
+
         online = []
 
+        for player in players:
+            if player.online and player.game.find('Minecraft') >= 0:
+                online.append(player)
+
+        return online
+
+    async def get_online_players(self) -> List[PlayerInfo]:
+        players = []
         me = await self._client.presence.get_presence_own()
-        if me.state == XBOX_STATE_ONLINE:
-            online.append('Nellrun')
+        players.append(
+            PlayerInfo(
+                    gamertag='Nellrun', 
+                    online=me.state == XBOX_STATE_ONLINE,
+                    game='Minecraft'
+                )
+        )
 
         friends = await self._client.people.get_friends_own()
 
-        
         for friend in friends.people:
-            if friend.presence_state == XBOX_STATE_ONLINE:
-                if friend.presence_text.find('Minecraft') >= 0:
-                    online.append(friend.modern_gamertag)
-        
-        return online
+            players.append(
+                PlayerInfo(
+                    gamertag=friend.modern_gamertag,
+                    online=friend.presence_state == XBOX_STATE_ONLINE,
+                    game=friend.presence_text
+                )
+            )
 
+        return players
 
-    def __del__(self):
-        self._session.close()
+    async def close(self):
+        await self._session.close()
 
 
 def get_client():
@@ -55,6 +79,11 @@ def get_client():
         client = XboxClient()
 
     return client
+
+
+async def close():
+    if client:
+        await client.close()
 
 
 client = XboxClient()

@@ -23,11 +23,12 @@ async def start(message: types.Message):
 async def online(message: types.Message):
     """Handle online command"""
     client = xbox_client.get_client()
-    online_friends = await client.get_minecraft_online()
-    if not online_friends:
+    online = await client.get_minecraft_online()
+
+    if not online:
         await message.reply('Nobody is playing minecraft =(')
     else:
-        await message.reply('Players: \n' + '\n'.join(online_friends) )
+        await message.reply('Players: \n' + '\n'.join(friend.gamertag for friend in online))
 
 
 @dp.message_handler(commands=['chat_id'])
@@ -54,8 +55,8 @@ async def on_startup(app):
 
 
 async def on_shutdown(dp):
-    # insert code here to run it before shutdown
-    pass
+    await pg.close()
+    await xbox_client.close()
 
 
 if __name__ == '__main__':
