@@ -1,10 +1,11 @@
 import asyncio
 import datetime
+import pytz
 from typing import NamedTuple, List
 
 import config
 import pg
-import pytz
+import helpers
 
 from aiogram import Bot
 from aiogram.types import ParseMode
@@ -17,22 +18,13 @@ class PlayerStats(NamedTuple):
     playtime: datetime.timedelta
 
 
-def format_string(playtime: datetime.timedelta):
-    playtime.total_seconds()
-    hours, minutes = playtime.seconds//3600, (playtime.seconds//60)%60
-
-    if not hours:
-        return f'{minutes} minutes'
-    return '{:02}:{:02} hours'.format(hours, minutes)
-
-
 def format_message(player_stats: List[PlayerStats]):
     sorted_list = sorted(
         player_stats, key=lambda x: x.playtime.total_seconds(), reverse=True)
 
     messages = []
     for player in sorted_list:
-        messages.append(f'{player.gamertag} - {format_string(player.playtime)}')
+        messages.append(f'{player.gamertag} - {helpers.format_playtime(player.playtime)}')
 
     return messages
 

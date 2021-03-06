@@ -32,7 +32,7 @@ class PostgresClient:
 
     async def get_active_sessions(self):
         return await self._db_client.fetch('''
-        SELECT id, gamertag FROM sessions WHERE status = $1
+        SELECT id, gamertag, start_at FROM sessions WHERE status = $1
         ''', SESSION_STATUS_ACTIVE)
 
     async def create_new_session(self, gamertag: str):

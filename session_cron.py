@@ -1,7 +1,11 @@
 import asyncio
+import datetime
+import pytz
+from typing import NamedTuple, Dict
 
 import config
 import pg
+import helpers
 import xbox_client
 
 from aiogram import Bot
@@ -9,14 +13,22 @@ from aiogram import Bot
 ITERATIONS = 9
 SLEEP_TIME = 60
 
+utc = pytz.UTC
 
-async def get_active_sessions(pg_client: pg.PostgresClient) -> dict:
+class Session(NamedTuple):
+    gamertag: str
+    id: str
+    start_at: datetime.datetime
+
+
+async def get_active_sessions(pg_client: pg.PostgresClient) -> Dict[str, Session]:
     pg_sessions = await pg_client.get_active_sessions()
 
     sessions = {}
     for session in pg_sessions:
-        sessions[session['gamertag']] = session['id']
-
+        sessions[session['gamertag']] = Session(gamertag=session['gamertag'],
+                                                id=session['id'],
+                                                start_at=session['start_at'])
     return sessions
 
 
@@ -39,11 +51,19 @@ async def main():
                         await bot.send_message(int(chat['chat_id']),
                                                f'{player.gamertag} is now online')
             if not player.online:
-                if player.gamertag in sessions:
-                    await pg_client.end_session(sessions[player.gamertag])
-                    for chat in chats:
-                        await bot.send_message(int(chat['chat_id']),
-                                               f'{player.gamertag} is now offline')
+            if player.gamertag in sessions:
+                session = sessions[player.gamertag]
+                await pg_client.end_session(session.id)
+
+                session_time = (session.start_at + datetime.timedelta(
+                    hours=1)) - utc.localize(datetime.datetime.utcnow())
+
+                formated_time = helpers.format_playtime(session_time)
+
+                for chat in chats:
+                    await bot.send_message(int(chat['chat_id']),
+                                           f'{player.gamertag} is now '
+                                           f'offline (session: {formated_time})')
 
         await asyncio.sleep(SLEEP_TIME)
 
