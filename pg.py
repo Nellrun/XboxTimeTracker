@@ -55,6 +55,7 @@ class PostgresClient:
         SELECT id, gamertag, start_at, ended_at
         FROM sessions
         WHERE (start_at < $1 AND ended_at >= $2) 
+        OR (start_at < $1 and ended_at is NULL)
         ''', date_end, date_start)
 
     async def close(self):

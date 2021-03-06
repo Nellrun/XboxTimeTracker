@@ -19,9 +19,10 @@ class PlayerStats(NamedTuple):
 def format_string(playtime: datetime.timedelta):
     playtime.total_seconds()
     hours, minutes = playtime.seconds//3600, (playtime.seconds//60)%60
+
     if not hours:
         return f'{minutes} minutes'
-    return f'{hours}:{minutes} hours'
+    return '{:02}:{:02} hours'.format(hours, minutes)
 
 
 def format_message(player_stats: List[PlayerStats]):
@@ -53,7 +54,9 @@ async def main():
 
     for elem in history:
         start = max(elem['start_at'], utc.localize(day_start))
-        end = min(elem['ended_at'], utc.localize(day_end))
+        end = utc.localize(day_end)
+        if elem['ended_at']:
+            end = min(elem['ended_at'], utc.localize(day_end))
 
         gamertag = elem['gamertag']
 
