@@ -7,6 +7,7 @@ import pg
 import pytz
 
 from aiogram import Bot
+from aiogram.types import ParseMode
 
 utc = pytz.UTC
 
@@ -69,10 +70,12 @@ async def main():
     for key, value in stats_by_players.items():
         players_stats.append(PlayerStats(gamertag=key, playtime=value))
 
-    message = 'Today stats:\n' + '\n'.join(format_message(players_stats))
+    today_str = datetime.date.today().strftime('%d/%m/%Y')
+
+    message = f'*Today stats {today_str}:*\n' + '\n'.join(format_message(players_stats))
 
     for chat in chats:
-        await bot.send_message(int(chat['chat_id']), message)
+        await bot.send_message(int(chat['chat_id']), message, parse_mode=ParseMode.MARKDOWN)
 
     await pg_client.close()
     await bot.close()
