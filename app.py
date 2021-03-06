@@ -8,10 +8,14 @@ bot = Bot(config.TOKEN)
 dp = Dispatcher(bot)
 
 
-@dp.message_handler(commands=['start'])
+@dp.message_handler(commands=['start', 'help'])
 async def start(message: types.Message):
     """Handle start command"""
-    await message.reply("I'm alive")
+    await message.reply("""
+    /chat_id - вывести id чата
+    /online - вывести текущий онлайн на сервере
+    /subscribe - подписаться на оповещение о заходе в игру
+    """)
 
 
 @dp.message_handler(commands=['online'])
