@@ -50,7 +50,7 @@ async def main():
                     for chat in chats:
                         await bot.send_message(int(chat['chat_id']),
                                                f'{player.gamertag} is now online')
-            if not player.online:
+            if not player.online or player.game.find('Minecraft') == -1:
                 if player.gamertag in sessions:
                     session = sessions[player.gamertag]
                     await pg_client.end_session(session.id)
