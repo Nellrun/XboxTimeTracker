@@ -34,7 +34,7 @@ class XboxClient:
         self._client = XboxLiveClient(auth_mgr)
 
     async def get_minecraft_online(self) -> List[PlayerInfo]:
-        players = await self.get_online_players()
+        players = await self.get_players()
 
         online = []
 
@@ -44,7 +44,7 @@ class XboxClient:
 
         return online
 
-    async def get_online_players(self) -> List[PlayerInfo]:
+    async def get_players(self) -> List[PlayerInfo]:
         players = []
         me = await self._client.presence.get_presence_own()
         players.append(
