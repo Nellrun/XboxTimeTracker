@@ -8,6 +8,8 @@ from xbox.webapi.authentication.manager import AuthenticationManager
 from xbox.webapi.authentication.models import OAuth2TokenResponse
 
 
+XBOX_STATE_ONLINE = 'Online'
+
 class XboxClient:
 
     _session: ClientSession
@@ -25,15 +27,21 @@ class XboxClient:
     
 
     async def get_minecraft_online(self) -> List[str]:
+        online = []
+
+        me = await self._client.presence.get_presence_own()
+        if me.state == XBOX_STATE_ONLINE:
+            online.append('Nellrun')
+
         friends = await self._client.people.get_friends_own()
 
-        online_friends = []
-        for friend in friends.people:
-            if friend.presence_state == 'Online':
-                if friend.presence_text.find('Minecraft') >= 0:
-                    online_friends.append(friend.modern_gamertag)
         
-        return online_friends
+        for friend in friends.people:
+            if friend.presence_state == XBOX_STATE_ONLINE:
+                if friend.presence_text.find('Minecraft') >= 0:
+                    online.append(friend.modern_gamertag)
+        
+        return online
 
 
     def __del__(self):

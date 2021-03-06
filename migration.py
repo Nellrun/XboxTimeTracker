@@ -19,5 +19,17 @@ async def main():
     ''')
 
 
+    await conn.execute('''
+        CREATE TABLE if not exists sessions(
+            id SERIAL PRIMARY KEY,
+            gamertag TEXT NOT NULL,
+            status TEXT DEFAULT 'active',
+            start_at  TIMESTAMPTZ DEFAULT NOW(),
+            ended_at  TIMESTAMPTZ DEFAULT NULL,
+            updated  TIMESTAMPTZ DEFAULT NOW()
+        )
+    ''')
+
+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
