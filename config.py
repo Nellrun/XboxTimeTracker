@@ -16,3 +16,6 @@ WEBAPP_PORT = os.environ.get('PORT')
 XBOX_CLIENT_ID = os.getenv('XBOX_CLIENT_ID', '')
 XBOX_CLIENT_SECRET = os.getenv('XBOX_CLIENT_SECRET', '')
 XBOX_TOKEN = os.getenv('XBOX_TOKEN', '{}')
+
+
+DATABASE_URL = os.getenv('DATABASE_URL', '')

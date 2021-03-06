@@ -1,14 +1,12 @@
 import asyncio
-import os
+
+import config
 
 import asyncpg
 
 
-DATABASE_URL = os.getenv('DATABASE_URL', '')
-
 async def main():
-
-    conn = await asyncpg.connect(DATABASE_URL)
+    conn = await asyncpg.connect(config.DATABASE_URL)
 
     await conn.execute('''
         CREATE TABLE if not exists subscriptions(

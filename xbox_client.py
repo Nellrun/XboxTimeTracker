@@ -51,10 +51,9 @@ class XboxClient:
 def get_client():
     global client
 
-    if client:
-        return client
+    if not client:
+        client = XboxClient()
 
-    client = XboxClient()
     return client
 
 

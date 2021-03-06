@@ -1,4 +1,5 @@
 import config
+import pg
 import xbox_client
 
 from aiogram import Bot, Dispatcher, types
@@ -12,9 +13,9 @@ dp = Dispatcher(bot)
 async def start(message: types.Message):
     """Handle start command"""
     await message.reply("""
-    /chat_id - вывести id чата
-    /online - вывести текущий онлайн на сервере
-    /subscribe - подписаться на оповещение о заходе в игру
+/chat_id - вывести id чата
+/online - вывести текущий онлайн на сервере
+/subscribe - подписаться на оповещение о заходе в игру
     """)
 
 
@@ -32,6 +33,18 @@ async def online(message: types.Message):
 @dp.message_handler(commands=['chat_id'])
 async def chat_id(message: types.Message):
     await message.reply(message.chat.id)
+
+
+@dp.message_handler(commands=['subscribe'])
+async def subscribe(message: types.Message):
+    pg_client = await pg.get_client()
+    try:
+        await pg_client.make_subscribe(message.chat.id)
+    except Exception:
+        await message.reply('Something went wrong')
+        raise
+    else:
+        await message.reply('Successfully subscribed')
 
 
 async def on_startup(app):
