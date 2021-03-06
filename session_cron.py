@@ -51,19 +51,19 @@ async def main():
                         await bot.send_message(int(chat['chat_id']),
                                                f'{player.gamertag} is now online')
             if not player.online:
-            if player.gamertag in sessions:
-                session = sessions[player.gamertag]
-                await pg_client.end_session(session.id)
+                if player.gamertag in sessions:
+                    session = sessions[player.gamertag]
+                    await pg_client.end_session(session.id)
 
-                session_time = (session.start_at + datetime.timedelta(
-                    hours=1)) - utc.localize(datetime.datetime.utcnow())
+                    session_time = utc.localize(datetime.datetime.utcnow()) - \
+                                   session.start_at
 
-                formated_time = helpers.format_playtime(session_time)
+                    formated_time = helpers.format_playtime(session_time)
 
-                for chat in chats:
-                    await bot.send_message(int(chat['chat_id']),
-                                           f'{player.gamertag} is now '
-                                           f'offline (session: {formated_time})')
+                    for chat in chats:
+                        await bot.send_message(int(chat['chat_id']),
+                                               f'{player.gamertag} is now '
+                                               f'offline (session: {formated_time})')
 
         await asyncio.sleep(SLEEP_TIME)
 
