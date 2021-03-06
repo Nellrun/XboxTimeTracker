@@ -15,7 +15,7 @@ class PostgresClient:
         await self._db_client.execute('''
         INSERT INTO subscriptions(chat_id) VALUES ($1)
         ON CONFLICT DO NOTHING
-        ''', chat_id)
+        ''', str(chat_id))
 
 
 async def get_client() -> PostgresClient:
