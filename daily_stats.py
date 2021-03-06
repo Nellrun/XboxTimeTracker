@@ -35,7 +35,7 @@ async def main():
 
     chats = await pg_client.get_subscribed_chats()
 
-    day_end = datetime.datetime.utcnow() + datetime.timedelta(hours=3)
+    day_end = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
     day_start = day_end - datetime.timedelta(days=1)
 
     history = await pg_client.get_history_sessions(
