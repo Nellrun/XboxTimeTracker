@@ -9,6 +9,7 @@ class PostgresClient:
     async def create():
         self = PostgresClient()
         self._db_client = await asyncpg.connect(config.DATABASE_URL)
+        return self
 
     async def make_subscribe(self, chat_id):
         await self._db_client.execute('''
