@@ -2,3 +2,4 @@ aiogram
 aiohttp
 xbox-webapi
 asyncpg
+pytest
