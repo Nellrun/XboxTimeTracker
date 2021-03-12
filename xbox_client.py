@@ -49,7 +49,7 @@ class XboxClient:
         me = await self._client.presence.get_presence_own()
         players.append(
             PlayerInfo(
-                    gamertag='Nellrun', 
+                    gamertag='Nellrun',
                     online=me.state == XBOX_STATE_ONLINE,
                     game='Minecraft'
                 )

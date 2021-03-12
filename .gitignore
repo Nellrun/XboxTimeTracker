@@ -1,5 +1,6 @@
 tokens.json
 test.py
+start_server.sh
 __pycache__/*
 .idea/*
 
