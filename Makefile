@@ -6,3 +6,6 @@ install-deps:
 run-tests:
 	export PYTHONPATH='./'
 	pytest tests/
+
+run-linter:
+	flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
