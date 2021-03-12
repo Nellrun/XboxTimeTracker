@@ -2,7 +2,7 @@ import datetime
 import collections
 from typing import List, NamedTuple
 
-from MinecraftBot.pg import Session
+from pg import Session
 
 import pytz
 

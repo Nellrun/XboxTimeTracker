@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional, NamedTuple, List
 
-import MinecraftBot.config as config
+import config
 
 import asyncpg
 
