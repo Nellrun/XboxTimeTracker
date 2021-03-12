@@ -1,5 +1,4 @@
 import config
-import helpers
 import pg
 import xbox_client
 
@@ -17,7 +16,6 @@ async def start(message: types.Message):
 /chat_id - вывести id чата
 /online - вывести текущий онлайн на сервере
 /subscribe - подписаться на оповещение о заходе в игру
-/stats - общая статистика по игровому времени
     """)
 
 
@@ -48,18 +46,6 @@ async def subscribe(message: types.Message):
         raise
     else:
         await message.reply('Successfully subscribed')
-
-
-@dp.message_handler(commands=['stats'])
-async def stats(message: types.Message):
-    pg_client = await pg.get_client()
-    history = await pg_client.get_history_full()
-
-    time_by_player = helpers.calc_total_time_by_gametag(history)
-    lines = helpers.format_playtime_message(time_by_player)
-
-    message_to_reply = '*Total stats:*\n' + '\n'.join(lines)
-    await message.reply(message_to_reply, parse_mode=types.ParseMode.MARKDOWN)
 
 
 async def on_startup(app):

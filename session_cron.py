@@ -15,15 +15,20 @@ SLEEP_TIME = 60
 
 utc = pytz.UTC
 
+class Session(NamedTuple):
+    gamertag: str
+    id: str
+    start_at: datetime.datetime
 
-async def get_active_sessions(
-        pg_client: pg.PostgresClient,
-) -> Dict[str, pg.Session]:
+
+async def get_active_sessions(pg_client: pg.PostgresClient) -> Dict[str, Session]:
     pg_sessions = await pg_client.get_active_sessions()
 
     sessions = {}
     for session in pg_sessions:
-        sessions[session.gamertag] = session
+        sessions[session['gamertag']] = Session(gamertag=session['gamertag'],
+                                                id=session['id'],
+                                                start_at=session['start_at'])
     return sessions
 
 

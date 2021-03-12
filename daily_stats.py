@@ -46,12 +46,12 @@ async def main():
     stats_by_players = {}
 
     for elem in history:
-        start = max(elem.start_at, utc.localize(day_start))
+        start = max(elem['start_at'], utc.localize(day_start))
         end = utc.localize(day_end)
-        if elem.ended_at:
-            end = min(elem.ended_at, utc.localize(day_end))
+        if elem['ended_at']:
+            end = min(elem['ended_at'], utc.localize(day_end))
 
-        gamertag = elem.gamertag
+        gamertag = elem['gamertag']
 
         if gamertag not in stats_by_players:
             stats_by_players[gamertag] = datetime.timedelta()
