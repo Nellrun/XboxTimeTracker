@@ -16,7 +16,6 @@ async def main():
         )
     ''')
 
-
     await conn.execute('''
         CREATE TABLE if not exists sessions(
             id SERIAL PRIMARY KEY,

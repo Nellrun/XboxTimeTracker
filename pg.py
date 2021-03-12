@@ -58,12 +58,13 @@ class PostgresClient:
         WHERE id = $3
         ''', SESSION_STATUS_ENDED, datetime.datetime.utcnow(), session_id)
 
-    async def get_history_sessions(self, date_start: datetime.datetime,
-                           date_end: datetime.datetime) -> List[Session]:
+    async def get_history_sessions(
+            self, date_start: datetime.datetime,
+            date_end: datetime.datetime) -> List[Session]:
         res = await self._db_client.fetch('''
         SELECT id, gamertag, start_at, ended_at
         FROM sessions
-        WHERE (start_at < $1 AND ended_at >= $2) 
+        WHERE (start_at < $1 AND ended_at >= $2)
         OR (start_at < $1 and ended_at is NULL)
         ''', date_end, date_start)
 

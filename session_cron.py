@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import pytz
-from typing import NamedTuple, Dict
+from typing import Dict
 
 import config
 import pg
@@ -50,8 +50,8 @@ async def main():
                     session = sessions[player.gamertag]
                     await pg_client.end_session(session.id)
 
-                    session_time = utc.localize(datetime.datetime.utcnow()) - \
-                                   session.start_at
+                    ended_at = utc.localize(datetime.datetime.utcnow())
+                    session_time = ended_at - session.start_at
 
                     formated_time = helpers.format_playtime(session_time)
 
