@@ -1,7 +1,7 @@
 import datetime
 
 from MinecraftBot import helpers
-from MinecraftBot.pg import Session
+from MinecraftBot.postgres import models
 
 import pytest
 
@@ -26,20 +26,20 @@ def test_format_playtime(seconds, expected_string):
 
 @pytest.mark.parametrize('sessions, expected', [
     ([
-        Session(0, 'player1', make_time(0, 0), make_time(0, 10))
+        models.Session(0, 'player1', make_time(0, 0), make_time(0, 10))
     ], [
         helpers.Playtime('player1', datetime.timedelta(minutes=10))
     ]),
     ([
-         Session(0, 'player1', make_time(0, 0), make_time(0, 10)),
-         Session(0, 'player2', make_time(0, 0), make_time(1, 10))
+         models.Session(0, 'player1', make_time(0, 0), make_time(0, 10)),
+         models.Session(0, 'player2', make_time(0, 0), make_time(1, 10))
      ], [
          helpers.Playtime('player1', datetime.timedelta(minutes=10)),
          helpers.Playtime('player2', datetime.timedelta(hours=1, minutes=10))
     ]),
     ([
-         Session(0, 'player1', make_time(0, 0), make_time(0, 10)),
-         Session(0, 'player1', make_time(0, 0), make_time(1, 10))
+         models.Session(0, 'player1', make_time(0, 0), make_time(0, 10)),
+         models.Session(0, 'player1', make_time(0, 0), make_time(1, 10))
      ], [
          helpers.Playtime('player1', datetime.timedelta(hours=1, minutes=20))
      ])
