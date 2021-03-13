@@ -4,9 +4,9 @@ import pytz
 from typing import Dict
 
 import config
-import pg
+import postgres
 import helpers
-import xbox_client
+import xbox_live
 
 from aiogram import Bot
 
@@ -17,8 +17,8 @@ utc = pytz.UTC
 
 
 async def get_active_sessions(
-        pg_client: pg.PostgresClient,
-) -> Dict[str, pg.Session]:
+        pg_client: postgres.client.PostgresClient,
+) -> Dict[str, postgres.models.Session]:
     pg_sessions = await pg_client.get_active_sessions()
 
     sessions = {}
@@ -29,8 +29,8 @@ async def get_active_sessions(
 
 async def main():
     bot = Bot(config.TOKEN)
-    client = xbox_client.get_client()
-    pg_client = await pg.get_client()
+    client = xbox_live.client.get_client()
+    pg_client = await postgres.client.get_client()
 
     chats = await pg_client.get_subscribed_chats()
 
@@ -56,7 +56,7 @@ async def main():
                     formated_time = helpers.format_playtime(session_time)
 
                     for chat in chats:
-                        await bot.send_message(int(chat['chat_id']),
+                        await bot.send_message(int(chat.chat_id),
                                                f'{player.gamertag} is now '
                                                f'offline (session: {formated_time})')
 

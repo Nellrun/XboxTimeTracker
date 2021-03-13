@@ -1,10 +1,9 @@
 import asyncio
 import datetime
 import pytz
-from typing import NamedTuple, List
 
 import config
-import pg
+import postgres
 import helpers
 
 from aiogram import Bot
@@ -13,25 +12,9 @@ from aiogram.types import ParseMode
 utc = pytz.UTC
 
 
-class PlayerStats(NamedTuple):
-    gamertag: str
-    playtime: datetime.timedelta
-
-
-def format_message(player_stats: List[PlayerStats]):
-    sorted_list = sorted(
-        player_stats, key=lambda x: x.playtime.total_seconds(), reverse=True)
-
-    messages = []
-    for player in sorted_list:
-        messages.append(f'{player.gamertag} - {helpers.format_playtime(player.playtime)}')
-
-    return messages
-
-
 async def main():
     bot = Bot(config.TOKEN)
-    pg_client = await pg.get_client()
+    pg_client = await postgres.client.get_client()
 
     chats = await pg_client.get_subscribed_chats()
 
@@ -60,14 +43,18 @@ async def main():
 
     players_stats = []
     for key, value in stats_by_players.items():
-        players_stats.append(PlayerStats(gamertag=key, playtime=value))
+        players_stats.append(helpers.Playtime(gamertag=key, playtime=value))
 
     today_str = datetime.date.today().strftime('%d/%m/%Y')
 
-    message = f'*Today stats {today_str}:*\n' + '\n'.join(format_message(players_stats))
+    message = f'*Today stats {today_str}:*\n' + '\n'.join(
+        helpers.format_playtime_message(players_stats),
+    )
 
     for chat in chats:
-        await bot.send_message(int(chat['chat_id']), message, parse_mode=ParseMode.MARKDOWN)
+        await bot.send_message(
+            int(chat.chat_id), message, parse_mode=ParseMode.MARKDOWN
+        )
 
     await pg_client.close()
     await bot.close()

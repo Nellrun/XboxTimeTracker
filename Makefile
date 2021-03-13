@@ -8,3 +8,12 @@ run-tests:
 
 run-linter:
 	flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+start-cron-session:
+	export PYTHONPATH='./'; python crons/session_cron.py
+
+start-cron-daily-stats:
+	export PYTHONPATH='./'; python crons/daily_stats.py
+
+start-bot:
+	python app.py

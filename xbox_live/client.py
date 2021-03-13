@@ -1,7 +1,7 @@
 from typing import List
-from typing import NamedTuple
 
 import config
+from xbox_live import models
 
 from aiohttp import ClientSession
 from xbox.webapi.api.client import XboxLiveClient
@@ -10,12 +10,6 @@ from xbox.webapi.authentication.models import OAuth2TokenResponse
 
 
 XBOX_STATE_ONLINE = 'Online'
-
-
-class PlayerInfo(NamedTuple):
-    gamertag: str
-    online: bool
-    game: str
 
 
 class XboxClient:
@@ -33,7 +27,7 @@ class XboxClient:
         auth_mgr.oauth = OAuth2TokenResponse.parse_raw(config.XBOX_TOKEN)
         self._client = XboxLiveClient(auth_mgr)
 
-    async def get_minecraft_online(self) -> List[PlayerInfo]:
+    async def get_minecraft_online(self) -> List[models.PlayerInfo]:
         players = await self.get_players()
 
         online = []
@@ -44,11 +38,11 @@ class XboxClient:
 
         return online
 
-    async def get_players(self) -> List[PlayerInfo]:
+    async def get_players(self) -> List[models.PlayerInfo]:
         players = []
         me = await self._client.presence.get_presence_own()
         players.append(
-            PlayerInfo(
+            models.PlayerInfo(
                     gamertag='Nellrun',
                     online=me.state == XBOX_STATE_ONLINE,
                     game='Minecraft'
@@ -59,7 +53,7 @@ class XboxClient:
 
         for friend in friends.people:
             players.append(
-                PlayerInfo(
+                models.PlayerInfo(
                     gamertag=friend.modern_gamertag,
                     online=friend.presence_state == XBOX_STATE_ONLINE,
                     game=friend.presence_text

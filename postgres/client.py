@@ -1,20 +1,14 @@
 import datetime
-from typing import Optional, NamedTuple, List
+from typing import Optional, List
 
 import config
+from postgres import models
 
 import asyncpg
 
 
 SESSION_STATUS_ACTIVE = 'active'
 SESSION_STATUS_ENDED = 'ended'
-
-
-class Session(NamedTuple):
-    id: int
-    gamertag: str
-    start_at: datetime.datetime
-    ended_at: Optional[datetime.datetime] = None
 
 
 class PostgresClient:
@@ -32,17 +26,19 @@ class PostgresClient:
         ON CONFLICT DO NOTHING
         ''', str(chat_id))
 
-    async def get_subscribed_chats(self):
-        return await self._db_client.fetch('''
+    async def get_subscribed_chats(self) -> List[models.Subscription]:
+        res = await self._db_client.fetch('''
         SELECT chat_id FROM subscriptions
         ''')
+
+        return [models.Subscription(**subs) for subs in res]
 
     async def get_active_sessions(self):
         res = await self._db_client.fetch('''
         SELECT id, gamertag, start_at FROM sessions WHERE status = $1
         ''', SESSION_STATUS_ACTIVE)
 
-        return [Session(**row) for row in res]
+        return [models.Session(**row) for row in res]
 
     async def create_new_session(self, gamertag: str):
         await self._db_client.execute('''
@@ -60,7 +56,7 @@ class PostgresClient:
 
     async def get_history_sessions(
             self, date_start: datetime.datetime,
-            date_end: datetime.datetime) -> List[Session]:
+            date_end: datetime.datetime) -> List[models.Session]:
         res = await self._db_client.fetch('''
         SELECT id, gamertag, start_at, ended_at
         FROM sessions
@@ -68,15 +64,15 @@ class PostgresClient:
         OR (start_at < $1 and ended_at is NULL)
         ''', date_end, date_start)
 
-        return [Session(**row) for row in res]
+        return [models.Session(**row) for row in res]
 
-    async def get_history_full(self) -> List[Session]:
+    async def get_history_full(self) -> List[models.Session]:
         res = await self._db_client.fetch('''
         SELECT id, gamertag, start_at, ended_at
         FROM sessions
         ''')
 
-        return [Session(**row) for row in res]
+        return [models.Session(**row) for row in res]
 
     async def close(self):
         await self._db_client.close()

@@ -1,7 +1,7 @@
 import config
 import helpers
-import pg
-import xbox_client
+import postgres
+import xbox_live
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils.executor import start_webhook
@@ -24,7 +24,7 @@ async def start(message: types.Message):
 @dp.message_handler(commands=['online'])
 async def online(message: types.Message):
     """Handle online command"""
-    client = xbox_client.get_client()
+    client = xbox_live.client.get_client()
     online = await client.get_minecraft_online()
 
     if not online:
@@ -40,7 +40,7 @@ async def chat_id(message: types.Message):
 
 @dp.message_handler(commands=['subscribe'])
 async def subscribe(message: types.Message):
-    pg_client = await pg.get_client()
+    pg_client = await postgres.client.get_client()
     try:
         await pg_client.make_subscribe(message.chat.id)
     except Exception:
@@ -52,7 +52,7 @@ async def subscribe(message: types.Message):
 
 @dp.message_handler(commands=['stats'])
 async def stats(message: types.Message):
-    pg_client = await pg.get_client()
+    pg_client = await postgres.client.get_client()
     history = await pg_client.get_history_full()
 
     time_by_player = helpers.calc_total_time_by_gametag(history)
@@ -69,8 +69,8 @@ async def on_startup(app):
 
 
 async def on_shutdown(dp):
-    await pg.close()
-    await xbox_client.close()
+    await postgres.client.close()
+    await xbox_live.client.close()
 
 
 if __name__ == '__main__':

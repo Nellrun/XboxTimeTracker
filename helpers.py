@@ -2,7 +2,7 @@ import datetime
 import collections
 from typing import List, NamedTuple
 
-from pg import Session
+from postgres import models
 
 import pytz
 
@@ -23,7 +23,9 @@ def format_playtime(playtime: datetime.timedelta):
     return '{:02}:{:02} hours'.format(hours, minutes)
 
 
-def calc_total_time_by_gametag(sessions: List[Session]) -> List[Playtime]:
+def calc_total_time_by_gametag(
+        sessions: List[models.Session]
+) -> List[Playtime]:
     """
     returns dict gamertag - timedelta
     """
