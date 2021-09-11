@@ -5,6 +5,7 @@ from typing import Optional, NamedTuple
 class Session(NamedTuple):
     id: int
     gamertag: str
+    game: str
     start_at: datetime.datetime
     ended_at: Optional[datetime.datetime] = None
 

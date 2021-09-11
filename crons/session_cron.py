@@ -10,8 +10,8 @@ import xbox_live
 
 from aiogram import Bot
 
-ITERATIONS = 9
-SLEEP_TIME = 60
+ITERATIONS = 18
+SLEEP_TIME = 30
 
 utc = pytz.UTC
 
@@ -39,26 +39,29 @@ async def main():
         sessions = await get_active_sessions(pg_client)
 
         for player in players:
-            if player.online and player.game.find('Minecraft') >= 0:
+            if player.online:
                 if player.gamertag not in sessions:
-                    await pg_client.create_new_session(player.gamertag)
-                    for chat in chats:
-                        await bot.send_message(int(chat.chat_id),
-                                               f'{player.gamertag} is now online')
-            if not player.online or player.game.find('Minecraft') == -1:
-                if player.gamertag in sessions:
-                    session = sessions[player.gamertag]
-                    await pg_client.end_session(session.id)
+                    await pg_client.create_new_session(player.gamertag, player.game)
+                    if player.game != 'Home':
+                        for chat in chats:
+                            await bot.send_message(int(chat.chat_id),
+                                                   f'{player.gamertag} is playing {player.game}')
+                else:
+                    session_game = sessions[player.gamertag].game
+                    if player.game != session_game:
+                        session = sessions[player.gamertag]
+                        await pg_client.end_session(session.id)
 
-                    ended_at = utc.localize(datetime.datetime.utcnow())
-                    session_time = ended_at - session.start_at
+                        ended_at = utc.localize(datetime.datetime.utcnow())
+                        session_time = ended_at - session.start_at
 
-                    formated_time = helpers.format_playtime(session_time)
+                        formated_time = helpers.format_playtime(session_time)
 
-                    for chat in chats:
-                        await bot.send_message(int(chat.chat_id),
-                                               f'{player.gamertag} is now '
-                                               f'offline (session: {formated_time})')
+                        for chat in chats:
+                            if player.game != 'Home':
+                                await bot.send_message(int(chat.chat_id),
+                                                       f'{player.gamertag} played {session_game} '
+                                                       f'(session: {formated_time})')
 
         await asyncio.sleep(SLEEP_TIME)
 
