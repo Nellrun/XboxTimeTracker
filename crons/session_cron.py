@@ -15,6 +15,11 @@ SLEEP_TIME = 30
 
 utc = pytz.UTC
 
+BANNED_GAMES = {
+    "Home",
+    "Xbox App"
+}
+
 
 async def get_active_sessions(
         pg_client: postgres.client.PostgresClient,
@@ -42,7 +47,7 @@ async def main():
                 if player.online:
                     if player.gamertag not in sessions:
                         await pg_client.create_new_session(player.gamertag, player.game)
-                        if player.game != 'Home':
+                        if player.game not in BANNED_GAMES:
                             for chat in chats:
                                 await bot.send_message(int(chat.chat_id),
                                                        f'{player.gamertag} is playing {player.game}')
@@ -58,7 +63,7 @@ async def main():
                         formated_time = helpers.format_playtime(session_time)
 
                         for chat in chats:
-                            if session.game != 'Home':
+                            if session.game not in BANNED_GAMES:
                                 await bot.send_message(int(chat.chat_id),
                                                        f'{player.gamertag} played {session.game} '
                                                        f'(session: {formated_time})')
