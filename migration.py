@@ -20,6 +20,7 @@ async def main():
         CREATE TABLE if not exists sessions(
             id SERIAL PRIMARY KEY,
             gamertag TEXT NOT NULL,
+            game     TEXT NOT NULL,
             status TEXT DEFAULT 'active',
             start_at  TIMESTAMPTZ DEFAULT NOW(),
             ended_at  TIMESTAMPTZ DEFAULT NULL,

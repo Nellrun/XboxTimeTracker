@@ -27,6 +27,17 @@ class XboxClient:
         auth_mgr.oauth = OAuth2TokenResponse.parse_raw(config.XBOX_TOKEN)
         self._client = XboxLiveClient(auth_mgr)
 
+    async def get_online(self) -> List[models.PlayerInfo]:
+        players = await self.get_players()
+
+        online = []
+
+        for player in players:
+            if player.online:
+                online.append(player)
+
+        return online
+
     async def get_minecraft_online(self) -> List[models.PlayerInfo]:
         players = await self.get_players()
 
@@ -40,15 +51,6 @@ class XboxClient:
 
     async def get_players(self) -> List[models.PlayerInfo]:
         players = []
-        me = await self._client.presence.get_presence_own()
-        players.append(
-            models.PlayerInfo(
-                    gamertag='Nellrun',
-                    online=me.state == XBOX_STATE_ONLINE,
-                    game='Minecraft'
-                )
-        )
-
         friends = await self._client.people.get_friends_own()
 
         for friend in friends.people:

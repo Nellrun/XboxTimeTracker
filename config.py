@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 TOKEN = os.getenv('TELEGRAM_TOKEN', '')
 
-WEBHOOK_HOST = 'https://minecraft-nocovid19-bot.herokuapp.com/'
+WEBHOOK_HOST = 'https://xbox-timetracker.herokuapp.com/'
 WEBHOOK_URL_PATH = '/webhook/' + TOKEN
 WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_URL_PATH)
 

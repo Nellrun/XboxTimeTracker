@@ -25,12 +25,12 @@ async def start(message: types.Message):
 async def online(message: types.Message):
     """Handle online command"""
     client = xbox_live.client.get_client()
-    online = await client.get_minecraft_online()
+    online_players = await client.get_online()
 
-    if not online:
-        await message.reply('Nobody is playing minecraft =(')
+    if not online_players:
+        await message.reply('Nobody is online =(')
     else:
-        await message.reply('Players: \n' + '\n'.join(friend.gamertag for friend in online))
+        await message.reply('Players: \n' + '\n'.join(friend.gamertag for friend in online_players))
 
 
 @dp.message_handler(commands=['chat_id'])
