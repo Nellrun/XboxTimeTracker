@@ -30,7 +30,7 @@ async def online(message: types.Message):
     if not online_players:
         await message.reply('Nobody is online =(')
     else:
-        await message.reply('Players: \n' + '\n'.join(friend.gamertag for friend in online_players))
+        await message.reply('Players: \n' + '\n'.join(f'{friend.gamertag} ({friend.game})' for friend in online_players))
 
 
 @dp.message_handler(commands=['chat_id'])

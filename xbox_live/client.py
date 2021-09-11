@@ -36,7 +36,7 @@ class XboxClient:
             if player.online:
                 online.append(player)
 
-        return online
+        return sorted(players, key=lambda x: x.game)
 
     async def get_minecraft_online(self) -> List[models.PlayerInfo]:
         players = await self.get_players()
