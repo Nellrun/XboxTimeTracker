@@ -30,11 +30,10 @@ async def get_active_sessions(
 async def main():
     bot = Bot(config.TOKEN)
     client = xbox_live.client.get_client()
-    pg_client = await postgres.client.get_client()
+    while True:
+        pg_client = await postgres.client.get_client()
+        chats = await pg_client.get_subscribed_chats()
 
-    chats = await pg_client.get_subscribed_chats()
-
-    for _ in range(ITERATIONS):
         players = await client.get_players()
         sessions = await get_active_sessions(pg_client)
 
@@ -62,11 +61,10 @@ async def main():
                                 await bot.send_message(int(chat.chat_id),
                                                        f'{player.gamertag} played {session_game} '
                                                        f'(session: {formated_time})')
-
+        await client.close()
+        await pg_client.close()
         await asyncio.sleep(SLEEP_TIME)
 
-    await client.close()
-    await pg_client.close()
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
