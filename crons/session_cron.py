@@ -45,22 +45,22 @@ async def main():
                         for chat in chats:
                             await bot.send_message(int(chat.chat_id),
                                                    f'{player.gamertag} is playing {player.game}')
-                else:
-                    session_game = sessions[player.gamertag].game
-                    if player.game != session_game:
-                        session = sessions[player.gamertag]
-                        await pg_client.end_session(session.id)
+            if player.gamertag in sessions:
+                session = sessions[player.gamertag]
+                if player.game != session.game:
+                    session = sessions[player.gamertag]
+                    await pg_client.end_session(session.id)
 
-                        ended_at = utc.localize(datetime.datetime.utcnow())
-                        session_time = ended_at - session.start_at
+                    ended_at = utc.localize(datetime.datetime.utcnow())
+                    session_time = ended_at - session.start_at
 
-                        formated_time = helpers.format_playtime(session_time)
+                    formated_time = helpers.format_playtime(session_time)
 
-                        for chat in chats:
-                            if player.game != 'Home':
-                                await bot.send_message(int(chat.chat_id),
-                                                       f'{player.gamertag} played {session_game} '
-                                                       f'(session: {formated_time})')
+                    for chat in chats:
+                        if session.game != 'Home':
+                            await bot.send_message(int(chat.chat_id),
+                                                   f'{player.gamertag} played {session.game} '
+                                                   f'(session: {formated_time})')
         await asyncio.sleep(SLEEP_TIME)
 
 
