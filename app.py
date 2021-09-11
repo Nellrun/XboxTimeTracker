@@ -16,6 +16,7 @@ async def start(message: types.Message):
     await message.reply("""
 /chat_id - вывести id чата
 /online - вывести текущий онлайн на сервере
+/all - список всех пользователей
 /subscribe - подписаться на оповещение о заходе в игру
 /stats - общая статистика по игровому времени
     """)
@@ -31,6 +32,15 @@ async def online(message: types.Message):
         await message.reply('Nobody is online =(')
     else:
         await message.reply('Players: \n' + '\n'.join(f'{friend.gamertag} ({friend.game})' for friend in online_players))
+
+
+@dp.message_handler(commands=['all'])
+async def online(message: types.Message):
+    """Handle online command"""
+    client = xbox_live.client.get_client()
+    players = await client.get_players()
+
+    await message.reply('Players: \n' + '\n'.join(f'{player.gamertag} ({player.game})' for player in players))
 
 
 @dp.message_handler(commands=['chat_id'])

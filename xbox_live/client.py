@@ -36,7 +36,7 @@ class XboxClient:
             if player.online:
                 online.append(player)
 
-        return sorted(players, key=lambda x: x.game)
+        return online
 
     async def get_minecraft_online(self) -> List[models.PlayerInfo]:
         players = await self.get_players()
@@ -62,7 +62,7 @@ class XboxClient:
                 )
             )
 
-        return players
+        return sorted(players, key=lambda x: x.game)
 
     async def close(self):
         await self._session.close()
