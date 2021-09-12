@@ -28,6 +28,11 @@ async def main():
         )
     ''')
 
+    await conn.execute('''
+        ALTER TABLE sessions
+            ADD game_detailed TEXT NOT NULL DEFAULT 'game'
+    ''')
+
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

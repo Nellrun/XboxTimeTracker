@@ -35,15 +35,15 @@ class PostgresClient:
 
     async def get_active_sessions(self):
         res = await self._db_client.fetch('''
-        SELECT id, gamertag, game, start_at FROM sessions WHERE status = $1
+        SELECT id, gamertag, game, game_detailed, start_at FROM sessions WHERE status = $1
         ''', SESSION_STATUS_ACTIVE)
 
         return [models.Session(**row) for row in res]
 
-    async def create_new_session(self, gamertag: str, game: str):
+    async def create_new_session(self, gamertag: str, game: str, game_detailed: str):
         await self._db_client.execute('''
-        INSERT INTO sessions(gamertag, game, status, start_at) VALUES ($1, $2, $3, $4)
-        ''', gamertag, game, SESSION_STATUS_ACTIVE, datetime.datetime.utcnow())
+        INSERT INTO sessions(gamertag, game, game_detailed, status, start_at) VALUES ($1, $2, $3, $4, $5)
+        ''', gamertag, game, game_detailed, SESSION_STATUS_ACTIVE, datetime.datetime.utcnow())
 
     async def end_session(self, session_id):
         await self._db_client.execute('''
@@ -58,7 +58,7 @@ class PostgresClient:
             self, date_start: datetime.datetime,
             date_end: datetime.datetime) -> List[models.Session]:
         res = await self._db_client.fetch('''
-        SELECT id, gamertag, game, start_at, ended_at
+        SELECT id, gamertag, game, game_detailed, start_at, ended_at
         FROM sessions
         WHERE (start_at < $1 AND ended_at >= $2)
         OR (start_at < $1 and ended_at is NULL)
@@ -68,7 +68,7 @@ class PostgresClient:
 
     async def get_history_full(self) -> List[models.Session]:
         res = await self._db_client.fetch('''
-        SELECT id, gamertag, game, start_at, ended_at
+        SELECT id, gamertag, game, game_detailed, start_at, ended_at
         FROM sessions
         ''')
 

@@ -46,7 +46,7 @@ async def main():
             for player in players:
                 if player.online:
                     if player.gamertag not in sessions:
-                        await pg_client.create_new_session(player.gamertag, player.game)
+                        await pg_client.create_new_session(player.gamertag, player.game, player.game_detailed)
                         # if player.game not in BANNED_GAMES:
                         #     for chat in chats:
                         #         await bot.send_message(int(chat.chat_id),

@@ -6,6 +6,7 @@ class Session(NamedTuple):
     id: int
     gamertag: str
     game: str
+    game_detailed: str
     start_at: datetime.datetime
     ended_at: Optional[datetime.datetime] = None
 
