@@ -9,6 +9,7 @@ import pytz
 
 class Playtime(NamedTuple):
     gamertag: str
+    game: str
     playtime: datetime.timedelta
 
 
@@ -35,18 +36,19 @@ def calc_total_time_by_gametag(
         start = session.start_at
         end = session.ended_at or now
 
-        result[session.gamertag] += end - start
+        result[(session.gamertag, session.game)] += end - start
 
-    return [
-        Playtime(gamertag, playtime) for gamertag, playtime in result.items()
+    playtime = [
+        Playtime(key[0], key[1], playtime) for key, playtime in result.items()
     ]
+    return sorted(playtime, key=lambda x: x.gamertag, x.game)
 
 
 def format_playtime_message(time_by_player: List[Playtime]) -> List[str]:
-    sorted_list = sorted(
-        time_by_player, key=lambda x: x.playtime.total_seconds(), reverse=True)
+    # sorted_list = sorted(
+    #     time_by_player, key=lambda x: x.playtime.total_seconds(), reverse=True)
 
     lines = []
-    for player in sorted_list:
-        lines.append(f'{player.gamertag} - {format_playtime(player.playtime)}')
+    for player in time_by_player:
+        lines.append(f'{player.gamertag} - {player.game} - {format_playtime(player.playtime)}')
     return lines
