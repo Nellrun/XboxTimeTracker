@@ -41,7 +41,7 @@ def calc_total_time_by_gametag(
     playtime = [
         Playtime(key[0], key[1], playtime) for key, playtime in result.items()
     ]
-    return sorted(playtime, key=lambda x: x.gamertag, x.game)
+    return sorted(playtime, key=lambda x: (x.gamertag, x.game))
 
 
 def format_playtime_message(time_by_player: List[Playtime]) -> List[str]:
