@@ -53,7 +53,7 @@ async def main():
                         #                                f'{player.gamertag} is playing {player.game}')
                 if player.gamertag in sessions:
                     session = sessions[player.gamertag]
-                    if player.game != session.game:
+                    if player.game_detailed != session.game_detailed:
                         session = sessions[player.gamertag]
                         await pg_client.end_session(session.id)
 
