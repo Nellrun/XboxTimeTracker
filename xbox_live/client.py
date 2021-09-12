@@ -58,7 +58,7 @@ class XboxClient:
                 models.PlayerInfo(
                     gamertag=friend.modern_gamertag,
                     online=friend.presence_state == XBOX_STATE_ONLINE,
-                    game=friend.presence_text
+                    game=friend.title_presence
                 )
             )
 
