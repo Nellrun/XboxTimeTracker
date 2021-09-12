@@ -50,15 +50,26 @@ class XboxClient:
         return online
 
     async def get_players(self) -> List[models.PlayerInfo]:
+        def format_game(presence_text: str, rich_precense: str):
+            if rich_precense:
+                return presence_text.split(rich_precense)[0].split('-')[0].strip()
+            return presence_text
+
         players = []
         friends = await self._client.people.get_friends_own()
 
         for friend in friends.people:
+            presence_details = None
+            for detail in friend.presence_details:
+                if detail.presence_text == friend.presence_text:
+                    presence_details = detail
+                    break
+
             players.append(
                 models.PlayerInfo(
                     gamertag=friend.modern_gamertag,
                     online=friend.presence_state == XBOX_STATE_ONLINE,
-                    game=friend.title_presence or friend.presence_text,
+                    game=format_game(friend.presence_text, presence_details.rich_presence_text),
                     game_detailed=friend.presence_text
                 )
             )
