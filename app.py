@@ -68,8 +68,11 @@ async def stats(message: types.Message):
     time_by_player = helpers.calc_total_time_by_gametag(history)
     lines = helpers.format_playtime_message(time_by_player)
 
-    message_to_reply = '*Total stats:*\n' + '\n'.join(lines)
-    await message.reply(message_to_reply, parse_mode=types.ParseMode.MARKDOWN)
+    MAX_LINES = 20
+
+    for i in range(0, len(lines), MAX_LINES):
+        message_to_reply = '*Total stats:*\n' + '\n'.join(lines[i:i+MAX_LINES])
+        await message.reply(message_to_reply, parse_mode=types.ParseMode.MARKDOWN)
 
 
 async def on_startup(app):
