@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import random
 import pytz
 from typing import Dict
 
@@ -38,6 +39,8 @@ async def main():
     pg_client = await postgres.client.get_client()
     while True:
         try:
+            if random.randint(0, 50) == 25:
+                client = xbox_live.client.get_client()
             chats = await pg_client.get_subscribed_chats()
 
             players = await client.get_players()
