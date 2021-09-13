@@ -12,7 +12,7 @@ import xbox_live
 from aiogram import Bot
 
 ITERATIONS = 18
-SLEEP_TIME = 30
+SLEEP_TIME = 50
 
 utc = pytz.UTC
 
@@ -40,6 +40,7 @@ async def main():
     while True:
         try:
             if random.randint(0, 50) == 25:
+                await client.close()
                 client = xbox_live.client.get_client()
             chats = await pg_client.get_subscribed_chats()
 
@@ -72,7 +73,7 @@ async def main():
                                                        f'(session: {formated_time})')
         except Exception as exc:
             print(exc)
-        await asyncio.sleep(SLEEP_TIME)
+        await asyncio.sleep(SLEEP_TIME + random.randint(0, 20))
 
 
 loop = asyncio.get_event_loop()
