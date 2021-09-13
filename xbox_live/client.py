@@ -38,17 +38,6 @@ class XboxClient:
 
         return online
 
-    async def get_minecraft_online(self) -> List[models.PlayerInfo]:
-        players = await self.get_players()
-
-        online = []
-
-        for player in players:
-            if player.online and player.game.find('Minecraft') >= 0:
-                online.append(player)
-
-        return online
-
     async def get_players(self) -> List[models.PlayerInfo]:
         def format_game(presence_text: str, rich_precense: str):
             if rich_precense:
@@ -65,11 +54,16 @@ class XboxClient:
                     presence_details = detail
                     break
 
+            if presence_details:
+                game = format_game(friend.presence_text, presence_details.rich_presence_text)
+            else:
+                game = friend.presence_text
+
             players.append(
                 models.PlayerInfo(
                     gamertag=friend.modern_gamertag,
                     online=friend.presence_state == XBOX_STATE_ONLINE,
-                    game=format_game(friend.presence_text, presence_details.rich_presence_text),
+                    game=game,
                     game_detailed=friend.presence_text
                 )
             )
