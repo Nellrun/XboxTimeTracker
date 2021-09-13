@@ -8,6 +8,7 @@ import config
 import postgres
 import helpers
 import xbox_live
+from utils.logger import logger
 
 from aiogram import Bot
 
@@ -39,17 +40,23 @@ async def main():
     pg_client = await postgres.client.get_client()
     while True:
         try:
+            random_value = random.randint(0, 50)
+            logger.info(f'random is {random_value}')
             if random.randint(0, 50) == 25:
+                logger.info('updating client')
                 await client.close()
                 client = xbox_live.client.get_client()
+            logger.info('getting chats')
             chats = await pg_client.get_subscribed_chats()
 
+            logger.info('getting friends and sessions')
             players = await client.get_players()
             sessions = await get_active_sessions(pg_client)
 
             for player in players:
                 if player.online:
                     if player.gamertag not in sessions:
+                        logger.info(f'open new session for player {player.gamertag} with game {player.game} ({player.game_detailed})')
                         await pg_client.create_new_session(player.gamertag, player.game, player.game_detailed)
                         # if player.game not in BANNED_GAMES:
                         #     for chat in chats:
@@ -59,6 +66,7 @@ async def main():
                     session = sessions[player.gamertag]
                     if player.game_detailed != session.game_detailed:
                         session = sessions[player.gamertag]
+                        logger.info(f'closing session for player {player.gamertag}')
                         await pg_client.end_session(session.id)
 
                         ended_at = utc.localize(datetime.datetime.utcnow())
@@ -73,7 +81,9 @@ async def main():
                                                        f'(session: {formated_time})')
         except Exception as exc:
             print(exc)
-        await asyncio.sleep(SLEEP_TIME + random.randint(0, 20))
+        sleep_time = SLEEP_TIME + random.randint(0, 20)
+        logger.info(f'going to sleep for {sleep_time} sec')
+        await asyncio.sleep(sleep_time)
 
 
 loop = asyncio.get_event_loop()
