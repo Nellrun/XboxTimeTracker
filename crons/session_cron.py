@@ -42,7 +42,7 @@ async def main():
         try:
             random_value = random.randint(0, 50)
             logger.info(f'random is {random_value}')
-            if random.randint(0, 50) == 25:
+            if random_value == 25:
                 logger.info('updating client')
                 await client.close()
                 client = xbox_live.client.get_client()
