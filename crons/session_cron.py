@@ -51,7 +51,10 @@ async def main():
 
             logger.info('getting friends and sessions')
             players = await client.get_players()
+            logger.info(f'found players {players}')
+
             sessions = await get_active_sessions(pg_client)
+            logger.info(f'found active sessions {sessions}')
 
             for player in players:
                 if player.online:
